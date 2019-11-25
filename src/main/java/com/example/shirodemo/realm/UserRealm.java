@@ -27,13 +27,6 @@ public class UserRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        /*String username = (String) SecurityUtils.getSubject().getPrincipal();
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        Set<String> stringSet = new HashSet<>();
-        stringSet.add("user:show");
-        stringSet.add("user:admin");
-        info.setStringPermissions(stringSet);
-        return info;*/
         String username = (String) SecurityUtils.getSubject().getPrincipal();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         // 角色
@@ -61,22 +54,6 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        /*String username = (String) authenticationToken.getPrincipal();
-        User user = userRepository.findByUserName(username);
-
-        if (user == null) {
-            throw new UnknownAccountException(); // 账号不存在
-        }
-        *//*if (user.getStatus() != 0) {
-            throw new LockedAccountException();  // 账号被锁定
-        }*//*
-        //String salt = user.getSalt();
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user,
-                user.getPassWord(),
-                ByteSource.Util.bytes(salt), getName());
-
-        return authenticationInfo;*/
-
         System.out.println("-------身份认证方法--------");
         String userName = (String) authenticationToken.getPrincipal();
         String userPwd = new String((char[]) authenticationToken.getCredentials());
@@ -86,7 +63,7 @@ public class UserRealm extends AuthorizingRealm {
         }
 
         //加密后的密码
-        String pwdString = MD5Util.MD5Pwd(userName,userPwd);
+        String pwdString = MD5Util.MD5Pwd(userPwd,userName+"salt");
 
         //根据用户名从数据库获取密码
         String password = user.getPassWord();
